@@ -49,18 +49,24 @@ body{
 .input{
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     padding: 1.5em;
     height: 1.5rem;
+
 }
+
+
 .output{
     padding: 1.5em;
     height: 1.5rem;
     border-bottom: 1px solid rgb(160, 161, 158);
 }
 .margin{
-    margin-right: 3em;
+    margin-right: 1em;
     
 }
+
 .zero{
     grid-column: 1 / 3;
 }
