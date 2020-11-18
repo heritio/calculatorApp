@@ -71,8 +71,8 @@ equals.addEventListener("click", (e) =>{
         operator = multiply;
     }
 
-    ourVal = operate(operator, +operandDisp.textContent, ourArr[ourArr.length - 1]);
-    ourArr.push(ourVal);
+    ourVal = operate(operator,+ourArr[ourArr.length - 1], +operandDisp.textContent );
+    ourArr.push(+ourVal);
     operandDisp.textContent = ourArr[ourArr.length -1];
     operatorDisp.textContent = "";
      
@@ -80,19 +80,21 @@ equals.addEventListener("click", (e) =>{
 
 
 function add(a,b){
-   return a + b;
+    
+    return parseFloat(a) + parseFloat(b);
+   
 }
 
 function subtract(a,b){
-    return a - b;
+  return parseFloat(a) - parseFloat(b);
 }
 
 function multiply(a,b){
-    return a * b;
+    return parseFloat(a) * parseFloat(b);
 }
 
 function divide(a, b){
-    return a / b;
+    return parseFloat(a) / parseFloat(b);
 }
 
 function operate(operator,a,b){
