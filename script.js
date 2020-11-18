@@ -1,20 +1,24 @@
 let output = document.querySelector(".output");
-let operand1Disp = document.querySelector(".operand1");
-let operatorDisp = document.querySelector(".operator");
+let operandDisp = document.querySelector(".operand1");
+let operatorDisp = document.querySelector(".operatordisp");
 let clearBtn = document.querySelector(".ac");
 let numBtns = document.querySelector(".num");
 let controls = document.getElementById("controlls");
 let operatorsList = document.querySelectorAll(".operator");
 let equals = document.querySelector(".equal");
-let ourCalcArr = [];
+let ourArr = [];
 let ourVal = 0;
-
+let ourOperator = "";
+operandDisp.textContent = ourVal;
+operatorDisp.textContent = ourOperator;
 
 clearBtn.addEventListener("click", (e) => {
-    operand1Disp.textContent = "";
-    operatorDisp.textContent = "";
-    output.textContent = "";
+    ourOperator = "";    
     ourVal = 0;
+    operandDisp.textContent = ourVal;
+    operatorDisp.textContent = ourOperator;
+    output.textContent = "";
+    ourArr = [];
    
 })
 
@@ -24,37 +28,38 @@ controls.addEventListener("click", (e) => {
         return;
     }
     ourVal += e.target.id;
-    operand1Disp.textContent = ourVal;
+    operandDisp.textContent = ourVal;
 })
 
 operatorsList.forEach((btn) => {
     btn.addEventListener("click", (e)=> {
-      operatorDisp.textContent = e.target.textContent;
-      if(operatorDisp.textContent != "" && operand1Disp.textContent != ""){
-          if(operatorDisp.textContent == "+"){
-            ourCalcArr[0] = +operand1Disp.textContent;
+    
+       if(operatorDisp.textContent == ""){
+           ourArr.push(+operandDisp.textContent);
+           ourVal = 0;
+           operatorDisp.textContent = e.target.textContent;
+       }else{
+            if(operatorDisp.textContent == "+"){
+                operator = add;
+            }else if(operatorDisp.textContent == "-"){
+                operator = subtract;
+            }else if(operatorDisp.textContent == "/"){
+                operator = divide;
+            }else if(operatorDisp.textContent == "*"){
+                operator = multiply;
+            }
+
+            ourVal = operate(operator, +operandDisp.textContent, +ourArr[ourArr.length - 1]);
+            ourArr.push(+ourVal);
             ourVal = 0;
-            operand1Disp.textContent = ourVal;
-          }else if(operatorDisp.textContent == "-"){
-            ourCalcArr[0] = +operand1Disp.textContent;
-            ourVal = 0;
-            operand1Disp.textContent = ourVal;
-          }else if(operatorDisp.textContent == "*"){
-            ourCalcArr[0] = +operand1Disp.textContent;
-            ourVal = 0;
-            operand1Disp.textContent = ourVal;
-          }else if(operatorDisp.textContent == "/"){
-            ourCalcArr[0] = +operand1Disp.textContent;
-            ourVal = 0;
-            operand1Disp.textContent = ourVal;
-          }
-          
-      }
+            operandDisp.textContent = ourArr[ourArr.length - 1];
+            operatorDisp.textContent = e.target.textContent;
+       }
     })
 })
 
 equals.addEventListener("click", (e) =>{
-    ourCalcArr[1] = +operand1Disp.textContent;
+
     
     if(operatorDisp.textContent == "+"){
         operator = add;
@@ -65,13 +70,12 @@ equals.addEventListener("click", (e) =>{
     }else if(operatorDisp.textContent == "*"){
         operator = multiply;
     }
-     
-    var calcultion = operate(operator,+ourCalcArr[0],+ourCalcArr[1]);
 
-    output.textContent = calcultion;
-    operand1Disp.textContent = calcultion;
-    ourVal += calcultion;
-    
+    ourVal = operate(operator, +operandDisp.textContent, ourArr[ourArr.length - 1]);
+    ourArr.push(ourVal);
+    operandDisp.textContent = ourArr[ourArr.length -1];
+    operatorDisp.textContent = "";
+     
 })
 
 
@@ -88,10 +92,6 @@ function multiply(a,b){
 }
 
 function divide(a, b){
-    if(b == 0){
-        output.textContent = "ERROR";
-        return;
-    }
     return a / b;
 }
 
