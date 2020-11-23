@@ -1,133 +1,136 @@
-let output = document.querySelector(".output");
-let operandDisp = document.querySelector(".operand1");
-let operatorDisp = document.querySelector(".operatordisp");
-let clearBtn = document.querySelector(".ac");
-let numBtns = document.querySelectorAll(".num");
-let controls = document.getElementById("controlls");
-let operatorsList = document.querySelectorAll(".operator");
-let equals = document.querySelector(".equal");
+let controls = document.querySelector("#controlls");
+let operators = document.querySelectorAll(".operator");
 let sign = document.querySelector(".sign");
 let percent = document.querySelector(".percent");
 let decimal = document.querySelector(".decimal");
-let ourArr = [];
-let ourVal = 0;
-let ourOperator = "";
-operandDisp.textContent = ourVal;
-operatorDisp.textContent = ourOperator;
+let equal = document.querySelector(".equal");
+let ac = document.querySelector(".ac");
+let dispIn = document.querySelector(".operand1");
+let operatorDisp = document.querySelector(".operatordisp");
+let dispOut = document.querySelector(".output");
+let arr = [];
+let val = "";
+let result = document.querySelector(".result");
 
-clearBtn.addEventListener("click", (e) => {
-    ourOperator = "";    
-    ourVal = 0;
-    operandDisp.textContent = ourVal;
-    operatorDisp.textContent = ourOperator;
-    output.textContent = "";
-    ourArr = [];
-   
+decimal.addEventListener("click", (e)=> {
+    let str = dispIn.textContent;
+    if(str.includes(".")){
+        return;
+    }else{
+        val = dispIn.textContent
+        val += e.target.textContent;
+        dispIn.textContent = val;
+    }
 })
 
-percent.addEventListener("click", (e) => {
-    ourVal = operandDisp.textContent;
-    ourVal = (+ourVal / 1000);
-    operandDisp.textContent = ourVal;
-})
+sign.addEventListener("click", () => {
+    let val = +dispIn.textContent;
 
-sign.addEventListener("click", (e) => {
-    ourVal = operandDisp.textContent;
-
-    if(ourVal < 0){
-       ourVal = Math.abs(+ourVal);
-    }else if(ourVal > 0){
-        ourVal = -Math.abs(+ourVal);
+    if(val < 0){
+       val = Math.abs(val);
+    }else if(val > 0){
+        val = -Math.abs(val);
     }
 
-    operandDisp.textContent = ourVal;   
+    dispIn.textContent = val;   
 })
 
+percent.addEventListener("click",() => {
+    dispIn.textContent = +dispIn.textContent / 100;
+})
 
+ac.addEventListener("click", () => {
+    dispIn.textContent = "";
+    dispOut.textContent = "";
+    operatorDisp.textContent = "";
+    val = "";
+    arr = [];
+})
 
-decimal.addEventListener("click",(e) => {
-    ourVal = operandDisp.textContent;
-    if(ourVal.includes(".")){
+controls.addEventListener("click", (e) => {
+    let isButton = e.target.classList.contains("num");
+    if(!isButton){
         return;
     }
-    ourVal += e.target.textContent;
-    operandDisp.textContent = ourVal;
+    val += e.target.textContent;
+    dispIn.textContent = val;
 })
 
-
-numBtns.forEach(btn => {
+operators.forEach((btn) => {
     btn.addEventListener("click", (e) => {
-    ourVal += e.target.id;
-    operandDisp.textContent = ourVal;
+        if(operatorDisp.textContent == "/"){
+            operator = divide;
+        }else if(operatorDisp.textContent == "*"){
+            operator = multiply;
+        }else if(operatorDisp.textContent == "-"){
+            operator = subtract
+        }else if(operatorDisp.textContent == "+"){
+            operator = add;
+        }
+
+      if(arr.length <= 0 && operatorDisp.textContent == ""){
+          arr.push(+dispIn.textContent);
+          val = "";
+          dispIn.textContent = val;
+          operatorDisp.textContent = e.target.textContent;
+      }else if(arr.length == 1){
+          let calc = operate(operator, arr[0], +dispIn.textContent);
+          arr.push(calc);
+          dispOut.textContent = arr[arr.length - 1];
+          val = "";
+          dispIn.textContent = val;
+          operatorDisp.textContent = e.target.textContent;
+      }else{
+        let calc = operate(operator, arr[arr.length - 1], +dispIn.textContent);
+        arr.push(calc);
+        dispOut.textContent = arr[arr.length - 1];
+        val = "";
+        dispIn.textContent = val;
+        operatorDisp.textContent = e.target.textContent;
+      }
     })
-})
+} )
 
-operatorsList.forEach((btn) => {
-    btn.addEventListener("click", (e)=> {
-    
-       if(operatorDisp.textContent == ""){
-           ourArr.push(+operandDisp.textContent);
-           ourVal = 0;
-           operatorDisp.textContent = e.target.textContent;
-       }else{
-            if(operatorDisp.textContent == "+"){
-                operator = add;
-            }else if(operatorDisp.textContent == "-"){
-                operator = subtract;
-            }else if(operatorDisp.textContent == "/"){
-                operator = divide;
-            }else if(operatorDisp.textContent == "*"){
-                operator = multiply;
-            }
-
-            ourVal = operate(operator, +operandDisp.textContent, +ourArr[ourArr.length - 1]);
-            ourArr.push(+ourVal);
-            ourVal = 0;
-            operandDisp.textContent = ourArr[ourArr.length - 1];
-            operatorDisp.textContent = e.target.textContent;
-       }
-    })
-})
-
-equals.addEventListener("click", (e) =>{
-
-    
-    if(operatorDisp.textContent == "+"){
-        operator = add;
-    }else if(operatorDisp.textContent == "-"){
-        operator = subtract;
-    }else if(operatorDisp.textContent == "/"){
+equal.addEventListener("click", () =>{
+    if(operatorDisp.textContent == "/"){
         operator = divide;
     }else if(operatorDisp.textContent == "*"){
         operator = multiply;
+    }else if(operatorDisp.textContent == "-"){
+        operator = subtract
+    }else if(operatorDisp.textContent == "+"){
+        operator = add;
     }
 
-    ourVal = operate(operator,+ourArr[ourArr.length - 1], +operandDisp.textContent );
-    ourArr.push(+ourVal);
-    operandDisp.textContent = ourArr[ourArr.length -1];
-    operatorDisp.textContent = "";
-     
+   if(arr.length <= 0){
+       dispOut.textContent = dispIn.textContent;
+   }else{
+       let calc = operate(operator, arr[arr.length - 1], +dispIn.textContent);
+       arr.push(calc);
+       dispOut.textContent = arr[arr.length - 1];
+       val = "";
+       dispIn.textContent = val;
+       operatorDisp.textContent = "";
+   }
+
 })
 
 
+
+
 function add(a,b){
-    
-    return parseFloat(a) + parseFloat(b);
-   
+    return a + b;
 }
-
 function subtract(a,b){
-  return parseFloat(a) - parseFloat(b);
+    return a - b;
 }
-
 function multiply(a,b){
-    return parseFloat(a) * parseFloat(b);
+    return a * b;
 }
-
-function divide(a, b){
-    return parseFloat(a) / parseFloat(b);
+function divide(a,b){
+    return a / b;
 }
 
 function operate(operator,a,b){
-    return operator(a,b);
+    return operator(a, b);
 }
